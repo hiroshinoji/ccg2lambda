@@ -35,44 +35,6 @@ def build_knowledge_axioms(ccg_trees):
     axioms_str += '\n'
     return axioms_str
 
-def prove_from_ccg(logical_interpretations, ccg_trees = None, ccg_xml_trees = None):
-    best_interpretations = \
-      [str(interpretation) for interpretation in logical_interpretations]
-    best_interpretations = \
-      [resolve_prefix_to_infix_operations(interp) for interp in best_interpretations]
-    premise_interpretations = best_interpretations[0:-1]
-    conclusion = best_interpretations[-1]
-    if ccg_trees != None:
-        dynamic_library_coq = build_arbitrary_dynamic_library(ccg_trees)
-        nltk_sig = convert_coq_signatures_to_nltk(dynamic_library_coq)
-        dynamic_library_nltk = build_dynamic_library(logical_interpretations, nltk_sig)
-        dynamic_library = merge_dynamic_libraries(
-          coq_lib=dynamic_library_coq,
-          nltk_lib=dynamic_library_nltk,
-          coq_static_lib_path='coqlib.v', # Useful to get reserved predicates.
-          ccg_xml_trees=ccg_xml_trees) # Useful to get full list of tokens for which we need to specify types.
-    else:
-        dynamic_library = build_dynamic_library(logical_interpretations)
-    dynamic_library_str = '\n'.join(dynamic_library)
-    knowledge_axioms = build_knowledge_axioms(ccg_xml_trees)
-    dynamic_library_str += '\n\n' + knowledge_axioms
-    coq_scripts = []
-    inference_result, coq_script = \
-      prove_statements(premise_interpretations, conclusion, dynamic_library_str)
-    coq_scripts.append(coq_script)
-    if inference_result:
-        inference_result_str = 'yes'
-    else:
-        negated_conclusion = negate_conclusion(conclusion)
-        inference_result, coq_script = \
-          prove_statements(premise_interpretations, negated_conclusion, dynamic_library_str)
-        coq_scripts.append(coq_script)
-        if inference_result:
-            inference_result_str = 'no'
-        else:
-            inference_result_str = 'unknown'
-    return inference_result_str, coq_scripts
-
 def get_formulas_from_doc(doc):
     """
     Returns string representations of logical formulas,
