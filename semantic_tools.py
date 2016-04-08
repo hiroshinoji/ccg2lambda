@@ -17,16 +17,9 @@
 import codecs
 import logging
 import re
-import simplejson
-import string
 import subprocess
 
-from nltk import Tree
-from nltk.sem.logic import (typecheck, read_type, ConstantExpression,
-  AbstractVariableExpression, InconsistentTypeHierarchyException)
-
-from knowledge import get_lexical_relations, get_tokens_from_ccg_tree
-from logic_parser import lexpr
+from knowledge import get_lexical_relations
 from nltk2coq import normalize_interpretation
 from semantic_types import get_dynamic_library_from_doc
 
