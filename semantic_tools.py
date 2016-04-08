@@ -23,16 +23,15 @@ from knowledge import get_lexical_relations
 from nltk2coq import normalize_interpretation
 from semantic_types import get_dynamic_library_from_doc
 
-def build_knowledge_axioms(ccg_trees):
-    if ccg_trees is None:
+def build_knowledge_axioms(doc):
+    if not doc:
         return ''
-    axioms = get_lexical_relations(ccg_trees)
+    axioms = get_lexical_relations(doc)
     axioms_str = ""
     for axiom in axioms:
         axioms_str += axiom + '\n'
         axiom_name = axiom.split()[1]
         axioms_str += 'Hint Resolve {0}.\n'.format(axiom_name)
-    axioms_str += '\n'
     return axioms_str
 
 def get_formulas_from_doc(doc):
@@ -63,7 +62,7 @@ def prove_doc(doc):
         return 'unknown', coq_scripts
     dynamic_library_str = get_dynamic_library_from_doc(doc, formulas)
 
-    knowledge_axioms = build_knowledge_axioms(doc.xpath('//ccg'))
+    knowledge_axioms = build_knowledge_axioms(doc)
     dynamic_library_str += '\n\n' + knowledge_axioms
     premises, conclusion = formulas[:-1], formulas[-1]
     inference_result, coq_script = \

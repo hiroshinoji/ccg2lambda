@@ -21,10 +21,6 @@ import re
 from linguistic_tools import linguistic_relationship
 from normalization import denormalize_token
 
-def get_tokens_from_ccg_tree(ccg_xml_tree):
-    tokens = [denormalize_token(t) for t in ccg_xml_tree.xpath('//token/@base')]
-    return tokens
-
 def create_antonym_axioms(relations_to_pairs):
     relation = 'antonym'
     antonyms = relations_to_pairs[relation]
@@ -37,10 +33,10 @@ def create_antonym_axioms(relations_to_pairs):
         axioms.append(axiom)
     return axioms
 
-def get_lexical_relations(ccg_xml_trees):
+def get_lexical_relations(doc):
     # Get tokens from all CCG trees and de-normalize them.
     # (e.g. remove the preceding underscore).
-    tokens = list(itertools.chain(*[get_tokens_from_ccg_tree(ccg) for ccg in ccg_xml_trees]))
+    tokens = doc.xpath('//token/@base')
     # For every token pair, extract linguistic relationships.
     relations_to_pairs = defaultdict(list)
     token_pairs = list(itertools.product(tokens, tokens))
@@ -59,4 +55,4 @@ def get_lexical_relations(ccg_xml_trees):
     antonym_axioms = create_antonym_axioms(relations_to_pairs)
     # Return the axioms as a list.
     axioms = list(itertools.chain(*[antonym_axioms]))
-    return axioms
+    return list(set(axioms))
