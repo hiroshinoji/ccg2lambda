@@ -22,6 +22,11 @@ from linguistic_tools import linguistic_relationship
 from normalization import denormalize_token
 
 def create_antonym_axioms(relations_to_pairs):
+    """
+    For every linguistic relationship, check if 'antonym' is present.
+    If it is present, then create an entry named:
+    Axiom ax_antonym_token1_token2 : forall x, _token1 x -> _token2 x -> False.
+    """
     relation = 'antonym'
     antonyms = relations_to_pairs[relation]
     axioms = []
@@ -49,9 +54,6 @@ def get_lexical_relations(doc):
         relations = linguistic_relationship(t1, t2)
         for relation in relations:
             relations_to_pairs[relation].append((t1, t2))
-    # For every linguistic relationship, check if 'antonym' is present.
-    # If it is present, then create an entry named:
-    # Axiom ax_relation_token1_token2 : forall x, _token1 x -> _token2 x -> False.
     antonym_axioms = create_antonym_axioms(relations_to_pairs)
     # Return the axioms as a list.
     axioms = list(itertools.chain(*[antonym_axioms]))
