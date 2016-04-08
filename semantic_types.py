@@ -18,16 +18,11 @@ import codecs
 import logging
 import re
 import simplejson
-import string
-import subprocess
 
-from nltk import Tree
-from nltk.sem.logic import (typecheck, read_type, ConstantExpression,
+from nltk.sem.logic import (read_type, ConstantExpression,
   AbstractVariableExpression, InconsistentTypeHierarchyException)
 
-from knowledge import get_lexical_relations, get_tokens_from_ccg_tree
 from logic_parser import lexpr
-from nltk2coq import normalize_interpretation
 from normalization import normalize_token
 
 def linearize_type(pred_type):
