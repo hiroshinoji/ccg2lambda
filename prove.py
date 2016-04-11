@@ -24,6 +24,7 @@ import os
 import sys
 import textwrap
 
+from abduction_tools import create_abduction_mechanism
 from semantic_tools import prove_doc
 from visualization_tools import convert_doc_to_mathml
 
@@ -48,19 +49,20 @@ def main(args = None):
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=DESCRIPTION)
     parser.add_argument("sem")
-    parser.add_argument("--abduction", action="store_true", default=False)
+    parser.add_argument("--abduction", nargs='?', type=str, default="coq")
     parser.add_argument("--gold_trees", action="store_true", default=False)
     args = parser.parse_args()
       
     if not os.path.exists(args.sem):
         print('File does not exist: {0}'.format(args.expression_templates_filename))
-    
+    abduction = create_abduction_mechanism(args.abduction)
+
     logging.basicConfig(level=logging.WARNING)
 
     parser = etree.XMLParser(remove_blank_text=True)
     doc = etree.parse(args.sem, parser)
 
-    inference_result, coq_scripts = prove_doc(doc)
+    inference_result, coq_scripts = prove_doc(doc, abduction)
     print(inference_result, file=sys.stdout)
     html_str = convert_doc_to_mathml(doc, coq_scripts)
     print(html_str, file=sys.stderr)
