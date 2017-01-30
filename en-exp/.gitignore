@@ -1,0 +1,10 @@
+depccg/*
+easyccg/*
+easysrl/*
+jiggxml/*
+result*
+plain/*
+tagged/*
+semparse*
+*.pyc
+__pycache__
