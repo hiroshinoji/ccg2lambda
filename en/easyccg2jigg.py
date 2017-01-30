@@ -29,7 +29,9 @@ def substitute_chars(sin):
       inside_tag = False
       t = s
     elif inside_tag:
-      if s == ' ':
+      if s == '_':
+        t = '-'
+      elif s == ' ':
         t = '_'
       elif s == '(':
         t = '-lb-'
